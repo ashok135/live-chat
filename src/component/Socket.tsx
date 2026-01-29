@@ -1,6 +1,6 @@
 import { io,type Socket } from "socket.io-client";
 
-export const socket: Socket = io("https://delight-ice-singing-upcoming.trycloudflare.com", {
+export const socket: Socket = io("https://captain-thesis-biodiversity-packets.trycloudflare.com", {
   transports: ["websocket"],
   autoConnect: true,
 });
