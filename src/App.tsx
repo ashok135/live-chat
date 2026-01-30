@@ -1,4 +1,3 @@
-
 import { socket } from "./component/Socket";
 import { useEffect, useState } from "react";
 
@@ -16,7 +15,6 @@ function App() {
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState<string>("");
-
 
   console.log(messages);
 
@@ -45,20 +43,16 @@ function App() {
     socket.emit("join", { username });
   }, [joined, username]);
 
-
-
-
   const sendGroupMessage: React.FormEventHandler<HTMLFormElement> = (e) => {
-    console.log("sendgroup woeing")
+    console.log("sendgroup woeing");
 
-    e.preventDefault()
-    console.log(text)
+    e.preventDefault();
+    console.log(text);
 
     if (!text.trim()) return;
-    console.log("sendgroup ")
+    console.log("sendgroup ");
 
     socket.emit("send-group", {
-
       groupText: text,
     });
 
@@ -103,29 +97,53 @@ function App() {
   }
 
   return (
-    <div className="container max-w-8xl mx-auto grid grid-cols-[30%_70%] mt-15">
+    <div className="container max-w-8xl mx-auto grid md:grid-cols-[30%_70%] grid-cols-1  mt-15 p-3">
       <div className="gird place-items-center">
         <h2 className="text-[30px]">Online user</h2>
         <ul>
           {onlineUsers.map((data, i) => {
-            return <li key={data + i}>{data}</li>;
+            return (
+              <li className="text-green-800" key={data + i}>
+                {data}
+              </li>
+            );
           })}
         </ul>
       </div>
 
-      <div className="gird place-items-center border border-blue-500 p-4 rounded-md">
+      <div className="gird place-items-center border border-blue-500 p-4 rounded-md relative">
         <h1 className="text-[30px] mb-2">Group chat </h1>
         <div
-          className=" min-h-75 max-h-95
+          className=" w-full min-h-75 max-h-95
             overflow-y-auto"
         >
           {messages.map((data) => {
             return (
-              <p
-                className={`text-${data.type == "system" ? "center bg-gray-500 rounded-lg px-4 py-1" : "left"} mt-2 text-green-700 `}
-              >
-                {data.text}
-              </p>
+              <>
+                {data.sender ? (
+                  <div
+                    className={`${data.sender == username ? " rounded-lg px-4 py-1 grid place-items-end  " : " grid place-items-end w-fit"} mt-2 `}
+                  >
+                    <div>
+                      <h6 className={`text-white pl-2 ${data.sender == username ? "text-right" : ""} `}>
+                        {data.sender == username ? "me" : data.sender}
+                      </h6>
+                      <h6 className={`${data.sender == username ?  "bg-blue-600 text-white px-4 py-2 rounded-b-lg rounded-tl-lg"  : "bg-gray-600 text-white px-4 py-2 rounded-b-lg rounded-tr-lg"} `}>{data.text}</h6>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="gird place-items-center">
+                    <p
+                      className={`text-center bg-gray-500 rounded-lg px-4 py-1" : "left"} mt-2 text-green-700 w-fit`}
+                    >
+                      <span className="text-black font-semibold text-[18px] pr-1">
+                        {data.type}:
+                      </span>{" "}
+                      {data.text}
+                    </p>
+                  </div>
+                )}
+              </>
             );
           })}
         </div>
