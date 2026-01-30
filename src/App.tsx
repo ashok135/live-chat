@@ -147,8 +147,8 @@ function App() {
             );
           })}
         </div>
-        <div>
-          <form action="" onSubmit={(e) => sendGroupMessage(e)}>
+        <div className="mt-6">
+          <form action="" onSubmit={(e) => sendGroupMessage(e)}  >
             <div className="flex gap-4">
               <input
                 className="w-full px-4 py-3
