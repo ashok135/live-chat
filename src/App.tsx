@@ -14,6 +14,7 @@ function App() {
   const [joined, setJoined] = useState<boolean>(false);
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [privateMsg,setPrivateMsg] = useState<Message[]>([]);
   const [text, setText] = useState<string>("");
 
   console.log(messages);
@@ -44,7 +45,7 @@ function App() {
   }, [joined, username]);
 
   const sendGroupMessage: React.FormEventHandler<HTMLFormElement> = (e) => {
-    console.log("sendgroup woeing");
+ 
 
     e.preventDefault();
     console.log(text);
