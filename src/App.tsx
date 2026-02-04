@@ -2,7 +2,7 @@
 import { CheckCircle, MessageCircle } from "lucide-react";
 import PrivateChat from "./component/PrivateChat";
 import { socket } from "./component/Socket";
-import { useEffect, useRef, useState } from "react";
+import { useEffect,  useState } from "react";
 interface userProps{
   username:string,
   id:string
@@ -32,7 +32,7 @@ function App() {
   const [showComponent,setShowComponent]= useState(false)
   const [privateMsg, setPrivateMsg] = useState<PrivateMessage[]>([]);
   const [senderId,setSenderId]=useState <userProps>({ username: "", id: "" })
-  const count = useRef<number>(null)
+  const [count,setCount] = useState <number |string >("")
 
   const [text, setText] = useState<string>("");
   const exceptme=onlineUsers.filter((data)=>data.id!== socket.id)
@@ -48,6 +48,7 @@ function App() {
     });
       socket.on("private-message-get", (data) => {
       setPrivateMsg((pre)=>[...pre,data]);
+      setCount(privateMsg.length)
     });
 
     socket.on("message", (msg: Message) => {
@@ -91,9 +92,7 @@ function App() {
 
     setText("");
   };
-  if(privateMsg.length!==0 ){
-   count.current = privateMsg.length
-  }
+ 
   const disconnect = ()=>{
     socket.disconnect()
     setJoined(false)
@@ -148,6 +147,7 @@ function App() {
     <div className="container max-w-8xl mx-auto grid md:grid-cols-[30%_70%] grid-cols-1  mt-15 p-3">
       <div className="gird place-items-center">
         <div className="flex gap-1">
+       {showComponent && <button className="bg-gray-400 text-black px-2 rounded-2xl" onClick={()=>setShowComponent(false)}>Back</button>}   
                   <h2 className="text-[30px]">Online user</h2>
         <button onClick={disconnect} className="bg-white rounded-2xl px-4 py-2">Logout</button>
         </div>
@@ -169,7 +169,7 @@ function App() {
               </li> 
               <div className="relative">
                 <MessageCircle color="white"/>
-               {count  && <span className="bg-red-500  absolute top-0 right-0 -mt-2.5 rounded-4xl text-white text-[12px] px-1">{count.current}</span> } 
+               {   <span className="bg-red-500  absolute top-0 right-0 -mt-2.5 rounded-4xl text-white text-[12px] px-1">{ count}</span> } 
               </div>
               </div>
               <button  onClick ={()=> {setShowComponent(true);
