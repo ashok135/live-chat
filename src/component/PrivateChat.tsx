@@ -45,9 +45,9 @@ function PrivateChat({   socket, username ,privateMsg,showComponent,senderId}: p
  if(!showComponent) return "no private msg"
  
   return (
-    <div>
+    <div className="mt-4">
       <div className="gird place-items-center border border-blue-500 p-4 rounded-md relative">
-        <h1 className="text-[30px] mb-2">{`Private chat${senderId.username}`} </h1>
+        <h1 className="text-[30px] mb-2">{`Private chat to:${senderId.username}`} </h1>
         <div
           className=" w-full min-h-75 max-h-95
             overflow-y-auto"
