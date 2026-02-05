@@ -1,4 +1,4 @@
-import React, {   useState } from "react";
+import React, {   useEffect, useRef, useState } from "react";
 import type { Socket } from "socket.io-client";
  
 
@@ -25,6 +25,7 @@ function PrivateChat({   socket, username ,privateMsg,showComponent,senderId}: p
  
    
   const [text, setText] = useState<string>("");
+  const bottomRef  = useRef<HTMLDivElement |null >(null)
   
  
   console.log("sented id ",senderId)
@@ -32,17 +33,23 @@ function PrivateChat({   socket, username ,privateMsg,showComponent,senderId}: p
   function sendPrivateMessage(e: React.FormEvent<HTMLFormElement>) {
    
     e.preventDefault();
+    
     if(senderId){
             socket.emit("private-message", { toSocketId: senderId.id, message: text });
          
-   
+          setText("")
      
 
     }
    
     
   }
- if(!showComponent) return "no private msg"
+ useEffect(() => {
+  bottomRef.current?.scrollIntoView({
+    behavior: "smooth"
+  });
+}, [privateMsg]); 
+ if(!showComponent) return " "
  
   return (
     <div className="mt-4">
@@ -84,6 +91,8 @@ function PrivateChat({   socket, username ,privateMsg,showComponent,senderId}: p
                     </p>
                   </div>
                 )}
+                 <div ref={bottomRef}></div>
+
               </>
             );
           })}

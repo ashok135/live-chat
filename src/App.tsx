@@ -2,7 +2,7 @@
 import { CheckCircle, MessageCircle } from "lucide-react";
 import PrivateChat from "./component/PrivateChat";
 import { socket } from "./component/Socket";
-import { useEffect,  useState } from "react";
+import { useEffect,  useRef,  useState } from "react";
 interface userProps{
   username:string,
   id:string
@@ -32,24 +32,31 @@ function App() {
   const [showComponent,setShowComponent]= useState(false)
   const [privateMsg, setPrivateMsg] = useState<PrivateMessage[]>([]);
   const [senderId,setSenderId]=useState <userProps>({ username: "", id: "" })
-  const [count,setCount] = useState <number |string >("")
+  const [count,setCount] = useState <boolean>(false)
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+  
 
   const [text, setText] = useState<string>("");
   const exceptme=onlineUsers.filter((data)=>data.id!== socket.id)
 
   console.log(messages);
   console.log(privateMsg)
-  console.log(senderId)
+  console.log(count)
 
   useEffect(() => {
     socket.on("online-users", (data:userProps[]) => {
       console.log(data)
       setOnlineUsers(data);
     });
-      socket.on("private-message-get", (data) => {
-      setPrivateMsg((pre)=>[...pre,data]);
-      setCount(privateMsg.length)
-    });
+   
+    socket.on("private-message-get", (data) => {
+  setPrivateMsg((prev) => {
+    const updated = [...prev, data];
+    setCount(!count); // ✅ correct length
+    return updated;
+  });
+});
+
 
     socket.on("message", (msg: Message) => {
       setMessages((prev) => [...prev, msg]);
@@ -67,6 +74,13 @@ function App() {
       socket.off("private-message-get")
     };
   }, []);
+
+  useEffect(() => {
+  bottomRef.current?.scrollIntoView({
+    behavior: "smooth"
+  });
+}, [messages]); 
+
 
   useEffect(() => {
     if (!joined) return;
@@ -169,11 +183,12 @@ function App() {
               </li> 
               <div className="relative">
                 <MessageCircle color="white"/>
-               {   <span className="bg-red-500  absolute top-0 right-0 -mt-2.5 rounded-4xl text-white text-[12px] px-1">{ count}</span> } 
+               {<span className="bg-red-500  absolute top-0 right-0 -mt-2.5 rounded-4xl text-white text-[8px] px-1">{ count ?  "New": ""}</span> } 
               </div>
               </div>
               <button  onClick ={()=> {setShowComponent(true);
                                        setSenderId(data)
+                                       setCount(false)
                                        }}  className="cursor-pointer text-white bg-blue-700 px-2 rounded-2xl" > Send Private </button>
               </div>
               
@@ -217,6 +232,7 @@ function App() {
                     </p>
                   </div>
                 )}
+                  <div ref={bottomRef}></div>
               </>
             );
           })}
